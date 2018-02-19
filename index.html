@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<!-- Dans la balise <head> on ajoute des informations a la page telles que le formatage des lettre en UTF8 ou le titre de la page, ou le style css applique a toute la page -->
+	<head>
+		<meta charset="UTF-8">
+		<title>Nombres relatifs</title>
+		<!--
+			J'ajoute ici la balise <style> qui va nous permettre de rajouter du css à nos balises HTML. D'ordinaire on écrit le css dans un fichier à part qu'on importe ensuite ici. Le css va permettre de styliser la page, changer les couleurs, rajouter des animations, mettre des ombres, des fonds transparants, rajouter des images et gérer leur taille et leur positionement etc. Ici il n'y en a quasiment pas, a part quelques positionnements. 
+			En css on designe les balise HTML via leur nom (ex: une balise html <h1> est appelé comme ceci en css : h1 {} ).
+			On peut designer une balise HTML via leurs classes aussi (ex: une balise <h1 class="bobby"> est appelé h1.bobby {} en css. 
+			Si en css on met un espace entre h1 et .bobby, cela correspond à une balise HTML qui contient une classe "bobby" qui est elle meme contenue dans une balise <h1> ). 
+			On peut désigner aussi une balise HTML via son id (ex: une balise <h1 id="myId"> est appelée h1#myId {} ou simplement #myId {} puisqu'un id doit designer une balise unique, contrairement aux classes qui peuvent etre partagees par plusieurs balises HTML). 
+		-->
+		<style type="text/css">
+			/* A partir de la on ecrit du css dans cette balise, et non plus du HTML */
+			.titre {
+				/*Permet de mettre le titre au centre de la page*/
+				text-align: center;
+			}
+			.time {
+				/*Permet de mettre le timer a droite de la page*/ 
+				text-align: right;
+			}
+			.question .submit {
+				/*Permet de mettre une marge de 1em a gauche du bouton 'Valider', 1em est une unité de mesure des pixels, on peut utiliser direct 'px' (pour pixel) au lieu de 'em', cahaque unité a sa particularité, il y en a plein d'autres*/
+				margin-left: 1em;
+			}
+			.reset-button {
+				/*permet de mettre une marge de 1em en haut et en bas du bouton 'Recommencer le test à zéro', ainsi qu'une marge de 0em à gauche et a droite du bouton (syntaxe necessaire pour que ça marche, on aurait pu ecrire aussi 'margin:1em 0em 1em 0em' ) */
+				margin:1em 0;
+			}
+		</style>
+	</head>
+	<!-- Dans la balise <body> on va mettre tout ce qui va etre affiche a l ecran-->
+	<body>
+		
+		<h1 class="titre">Trouve le résultat</h1>
+		<div class="time">
+			<!-- ici je met une balise <span> que je vais recuperer en javascript pour afficher les secondes qui passent -->
+			temps mis : <span></span> s
+		</div>
+
+		<div class="question">
+			<!-- Idem, je met des balisees <span> identifiees par des classes particulieres, pour les recuperer en javascript et afficher ici l operation a resoudre. Je vais egalement recuperer en javascript la balise <input class="user-input"> afin de recuperer ce qui a ete ecrit par l utilisateur. De plus j'ajoute la fonction javascript 'valider()' dans la balise <input type="button" value="valider"> qui va definir le comportement de ce bouton quand on click dessus -->
+			<span class="nombre1"></span><span class="signe"></span><span class="nombre2"></span> = <input class="user-input"><input class="submit" type="button" value="valider" onclick="valider()"/>
+		</div>
+
+		<!-- J'ai mis des balises <div> dans tous les sens, c'est la balise de base en HTML, normalement il y a des tonnes de balises differentes en HTMl qui definissent si un block est un menu, une barre de navigation, un lien, une image etc. mais ici comme le contenu est un peu brut, sans positionnement particulier, j'ai juste mis des <div> partout. L'organisation des balises est importante notamment pour que ce soit facile a recuperer en javascript mais surtout en css. Le but étant d'identifier clairement une balise et ne pas appliquer du javascript ou du css a une autre balise qui porterait la meme classe ou le meme nom que celle ciblee. Le ciblage de balise en css peut etre très complexe. Chaque balise HTML comporte egalement des attributs a renseigner afin d affiner le code, ici a part les attributs 'classe' ou 'type', 'value' etc, je n'en ai pas utiliser beaucoup. -->
+		<div>
+			<div class="reponse">
+				<!-- Idem, je place une balise <h4> vide que je vais recuperer et manipuler en javacsript -->
+				<h4>
+				</h4>
+			</div>
+			<p class="but">
+				Pour être concluant, tu dois répondre à au moins 20 questions et avoir une note supérieure ou égale à 17/20.
+			</p>
+			<div class="resultats">	
+				<!-- Idem je vais recuperer ces balises pour les manipuler en javascript -->
+				<div class="resultat-juste">
+				</div>
+				<div class="resultat-faux">
+				</div>
+				<div class="note">
+				</div>
+				<h3 class="conclusion">
+				</h3>
+			</div>
+			<div class="regle">
+				<h4>Règle :</h4>
+				<p>
+					1°) Le signe du résultat est celui du nombre qui a la plus grande partie numérique.
+					<br />
+					2°) Pour trouver le résultat, on fait une addition si les nombres ont le même signe et une soustraction si les nombres sont de signe contraire. 
+				</p>
+			</div>
+			<div class="reset-button">
+				<!-- J'associe ici la fonction javascript decrite plus bas "reset()" qui definiera ce que doit faire la page quand on click sur ce bouton -->
+				<input type="button" value="Recommencer le test à zéro" onclick="reset()"/>
+			</div>
+			<!-- ici j'ai place une balise <a> qui permet via son attribut href de nous rediriger vers une autre url -->
+			<a href="http://bahno.prof.free.fr/entrainement/index.htm">aller à la page d'accueil des entrainements</a>
+
+		</div>
+
+		<!--
+			Ici j'ajoute la balise <script> pour ecrire du javascript mais d'ordinaire on ecrit ca dans un fichier a part qu on importe ici.
+			Le javascript ici va permettre d ajouter de la logique a la vue HTML, notamment les calculs et la verification du bon resultat.
+			Ce qui est interessant avec le javascript c'est qu'il est executé directement par le client et non pas par le serveur, il n y a donc pas besoin de refaire appel au serveur pour faire des changements sur la page, on met a jour chaque element qu on veut changer sans rafraichir toute la page, ce qui est evidemment un gain de performance enorme, en evitant au maximum la limitation de la connexion internet et en evitant de reafficher tout ce qui n a pas ete changé dans la page. 
+		-->
+		<script>
+
+			/*A partir d'ici on ecrit pu du HTML mais du javascript*/
+
+			/* Recuperation des elements du DOM (Le DOM est l'ensemble des elements HTML affiches a l ecran), on recupere les elements HTML via les fonctions natives appartenant à "document", ici on utilise querySelector qui permet de recuperer un element du DOM grace au nom de la balise HTML où une de ses classes ou id. Lorsqu'on met un '.' devant un nom c'est pour designer une classe. Lorsqu'il n'y a pas de '.' c'est le nom de la balise HTML directement. Pour un id on aurait mis un '#' devant le nom. Bref, comme en css.
+			*/
+			var timeElement = document.querySelector('.time span');								// emplacement du timer
+			var nombre1Element = document.querySelector('.question .nombre1');					// le premier nombre de l operation a resoudre
+			var nombre2Element = document.querySelector('.question .nombre2');					// le second nombre de l operation a resoudre
+			var signeElement = document.querySelector('.question .signe');						// signe du second nombre de l operation
+			var userInputElement = document.querySelector('.question .user-input');				// reponse donnee par l utilisateur
+			var reponseElement = document.querySelector('.reponse h4');							// Va afficher si la reponse est juste ou fausse
+			var resultatJusteElement = document.querySelector('.resultats .resultat-juste');	// Affiche le nb de reponses justes
+			var resultatFauxElement = document.querySelector('.resultats .resultat-faux');		// Affiche le nombre de reponses fausses
+			var noteElement = document.querySelector('.resultats .note');						// Affiche la note globale du test
+			var conclusionElement = document.querySelector('.resultats .conclusion');			// Affiche la phrase qui dit si le test est concluant ou non
+
+			/*Je rajoute ici les variables utiles pour la suite et je les initialise. En javascript, les variables ne sont pas typées, ainsi ce sont toutes des 'var', il n'existe pas de 'int' ou 'long' ou 'char' comme dans les autres langages classiques*/
+
+			// Variables
+			var interval = null;			// Va contenir le timer
+			var time = 0;					// Va contenir le nombre de secondes ecoulees depuis le debut du test
+			var isGoodAnswer = false;		// Booleen qui permet d identifier si la reponse de l utilisateur est juste ou fausse
+			var notesArray = [];			// Un tableau qui va contenir toutes les notes qu a obtenu l utilisateur depuis le debut du test
+			var nbTest = 0;					// Va contenir le nombre de questions repondues par l utilisateur
+			var nbBonnesReponses = 0;		// Va contenir le nombre de bonnes reponses 
+			var nbMauvaisesReponses = 0;	// Va contenir le nombre de mauvaises reponses
+			var note = 0;					// Va contenir la note globale, c est a dire la moyenne des bonnes et mauvaises reponses depuis le debut du test
+
+			/*C'est là que ca va se corser, on part dans les fonctions, mais si tu fais du PHP tu ne seras pas trop depaysé */
+
+			// Fonctions
+			function valider() {	// Cette fonction est celle appelee quand on click sur le bouton 'Valider'
+				// On on augmente de 1 le nombre de question repondue
+				nbTest++;
+				// On test si la reponse donnee par l utilisateur est juste ou non via la fonction verifResult() qui renvoit true ou false, et on stock le resultat dans isGoodAnswer 
+				isGoodAnswer = verifResult(userInputElement.value);
+				
+				// traitement si la reponse est juste
+				if(isGoodAnswer) {
+					// On affiche une nouvelle operation a l ecran via la fonction nouvelleQuestion()
+					nouvelleQuestion();
+					// On affiche le texte suivant dans la balise <h4></h4> contenu dans la balise <div class="reponse"></div>
+					reponseElement.innerText = "réponse juste";
+					// idem on affiche le texte a afficher dans la balise qui va bien, on incremente la variable nbBonnesReponses en meme temps qu'on l affiche.
+					resultatJusteElement.innerText = "Nombre de réponses justes : " + ++nbBonnesReponses;
+				} else { // traitement si la reponse est fausse
+					reponseElement.innerText = "réponse fausse";
+					resultatFauxElement.innerText = "Nombre de réponses fausses : " + ++nbMauvaisesReponses;
+				}
+
+				// Mise a jour de la note affichee:
+				/*On met a jour la note globale en calculant la moyenne via la fonction calculMoyene(). On envoit en parametre de cette fonction le nombre '20' si la reponse est juste, et 0 si la reponse est fausse*/
+				note = calculMoyenne(isGoodAnswer ? 20 : 0);	
+				// On affiche le texte suivant (avec la note calculee precedemment) dans la balise qui va bien
+				noteElement.innerText = "Note : " + note + " / 20";
+				
+				// Mise a jour de la phrase de conclusion:
+				if(note >= 17 && nbTest >= 20) {
+					conclusionElement.innerText = "Test concluant : tu peux t’arrêter !";
+				} else {
+					conclusionElement.innerText = "Ce test n'est pas encore concluant : continue";
+				}
+				
+				// J efface la reponse de l utilisateur dans la balise input
+				userInputElement.value = "";
+			}
+
+			// fonction qui retourne un nombre compris entre -20 et 20 (inclus)
+			function randomNumber() {
+				/*
+					Cette fonction retourne un nombre aleatoire compris entre -20 et 20. 
+					Math.random retourne un nombre decimal aleatoire entre 0 et 1 exclu.
+					Math.floor() recupere la valeur entiere la plus basse du nombre passe en parametre (ex: 24,568 --> 24 ou -15,66 --> -16)
+				*/
+				return Math.floor(Math.random() * 41 - 20);
+			}
+
+			/*
+				Cette fonction verifie si le nombre passe en parametre est strictement egal a la somme des nombres affiche dans la partie operation de la page HTML.
+				Le triple "=" permet de verifier aussi le type de la variable (car en fait le javascript attribue des types aux variables, c'est juste qu'ils sont implicites). Du coup je transforme les nombres (recuperes dans les balises HTML de l operation) en nombre entier via la fonction parseInt(), car sinon ils seraient typée 'string' et leur somme ne corespondrait pas a la somme de leur valeur mais à la concatenation des deux valeurs cote a cote comme un string.
+			*/
+			function verifResult(resultat) {
+				return parseInt(resultat) === parseInt(nombre1Element.innerText) + parseInt(nombre2Element.innerText); // renvoie un booleen car on evalue une condition
+			}
+
+			/*
+				cette fonction permet d ecrire l operation a afficher, on recupere deux nombres aleatoires compris entre -20 et 20 et on les affiche dans les balises qui vont bien. On ajoute egalement le signe "+" qu'on affiche a l ecran quand le deuxieme nombre est positif, sinon on met un espace. 
+			*/
+			function nouvelleQuestion() {
+				nombre1Element.innerText = randomNumber();
+				nombre2Element.innerText = randomNumber();
+				// j ai utilise ici l ecriture ternaire, on utilise la syntaxe suivante : "condition" ? "valeur retournee si vrai" : "valeur retournee si faux"
+				signeElement.innerText = nombre2Element.innerText >= 0 ? " + " : " "; 
+			}
+
+			/*
+				Cette fonction permet de caluler la moyenne des notes contenus dans le tableau notesArray.
+				Au lieu de mettre 'var temp = 0', on met ici 'let temp = 0', en effet 'var' cree des variables globales	alors que 'let' cree des variables locales, leur portee se limite au {} dans lesquelles elles sont incluses.		
+			*/
+			function calculMoyenne(nouvelleNote) {
+				let temp = 0;
+				// On ajoute la nouvelle note au tableau notesArray
+				notesArray.push(nouvelleNote);
+				/* 
+					On fait la somme de tous les elements du tableau, stocké dans la variable temp. 
+					Ici on voit la grande particularite du javascript, les fonction de callback. En fait en javascript une fonction peut etre stockée dans une variable et s'utiliser ainsi comme telle. la fonction forEach() (associé à chaque tableau javascript) prend en parametre une fonction qui sera appliquee a chaque element du tableau. On identifie ces elements via le parametre de la fonction de callback (ici 'element'). 
+					Ainsi cela evite d'écrire une boucle for pour parcourir touts les elements d'un tableau. 
+
+				*/
+				notesArray.forEach(function(element) {
+					temp += element;
+				})
+				// je renvoie l'entier resultant de la division de la somme des notes, par le nombre de notes (bref une moyenne quoi)
+				return parseInt(temp / notesArray.length);
+			}
+
+			/* 
+				Cette fonction reinitialise toutes les variables qu il faut pour recommencer un nouveau test, elle est appelee quand on clique sur le bouton 'recommencer le test à zéro'
+			*/
+			function reset() {
+				
+				isGoodAnswer = false;
+				notesArray.length = 0;		// ceci permet de vider un tableau en javascript
+				nbTest = 0;
+				nbBonnesReponses = 0;
+				nbMauvaisesReponses = 0;
+
+				reponseElement.innerText = "";
+				resultatJusteElement.innerText = "";
+				resultatFauxElement.innerText = "";
+				noteElement.innerText = "";
+				conclusionElement.innerText = "";
+				userInputElement.value = "";
+
+				// je reinitialise le timer
+				initTimer();
+
+				// on change l operation affichee
+				nouvelleQuestion();
+			}
+
+			// Cette fonction permet d initialiser le timer
+			function initTimer() {
+				timeElement.innerText = 0;				// on affiche 0 a l ecran avant que le timer demarre
+				clearInterval(interval);				// Si on a deja un timer en marche, on le kill
+				time = 0;								// on remet la variable time a zero
+				interval = setInterval(function(){		// on cree un interval qui va executer la fonction passee en parametre toutes les 1000 millisecondes
+					timeElement.innerText = ++time;		// a chaque passage on augmente de 1 le nombre affiche
+				},1000);
+			}
+
+			// Initialisation du test
+			/*
+				La on entre aussi dans une particularite du javascript, j'ai cree ici une fonction qui est directement appelee. C'est comme si on appelait une fonction classique (ex: la fonction "bob" definie comme ca : 
+					
+					function bob() { 
+						console.log('exemple'); 
+					}
+
+				je l'appellerai ainsi :
+
+					bob();
+
+				) sauf qu'a la place d'appeler une fonction qui a été definie plus tot dans le code, je la definie directement pendant son appel (ex: on remplace bob par sa definition :
+					
+					a la place de ceci :
+					
+					bob();
+
+					on remplace bob par :
+
+					(function bob() { 
+						console.log('exemple'); 
+					}) 
+
+					en encadrant le tout avec des parentheses pour isoler le tout,
+					et on l'appelle en ajoutant () à la fin :
+
+					(function bob() { 
+						console.log('exemple'); 
+					})();
+
+					c'est comme si on faisait :
+
+					(bob)() au lieu de bob() et qu on remplacait bob par sa definition.
+
+				)
+			*/
+			(function initialisation() {		// Cette fonction va donc etre executee des l ouverture de ce fichier dans le navigateur.
+
+				// Utilisation de la touche 'Entree' pour valider le resultat
+				/*
+					Ici j ajoute un listener de type "keyup" a la balise HTML <input class="user-input">, ce qui veut dire que la fonction de callback decrite ci-dessous sera executee chaque fois que l evenement "keyup" apparaitra au sein de cette balise. L evenement "keyup" correspond au fait qu on relache une touche du clavier.
+				*/
+				userInputElement.addEventListener("keyup", function(event) {
+					// preventDefault sert a stopper toutes les instructions qui sont executees par defaut a la suite de l apparition de cet evenement
+				    event.preventDefault();
+				    /* 
+				   		event est un parametre de la fonction de callback qui va contenir des informations sur l evenement qui est appararu au sein de la balise.
+				   		Si le keycode de la touche du clavier relachee est egal a 13, on simule un click sur la bouton 'Valider' (recupere ici via le queryselector).
+				   		les deux touches "Entree" du clavier ont 13 pour keycode, ainsi si on relache une des touches "Entree" du clavier quand on est en train d ecrire dans la balise <input class="user-input">, c'est comme si  on appuyait sur le bouton 'Valider' a coté.
+				   	*/
+				   	if (event.keyCode === 13) document.querySelector('.submit').click();
+				});
+
+				// Premiere operation affichee sur la page
+				nouvelleQuestion();
+
+				// initialisation du timer
+				initTimer();
+
+			})();
+			/* 
+				J'aurais tres bien pu sortir ces instructions de la fonction initialisation, ca aurait ete egalement execute a l ouverture de ce fichier dans le navigateur mais j aime bien, pour des questions d organisation du code, ne pas laisser trainer des instructions en vrac dans le fichier. C est plus clair je trouve de mettre tout ce qui va etre execute tout de suite dans une fonction initialisation.
+			*/
+
+
+
+			/*
+				Voila, j ai fait cette page de cette facon mais il y a des tonnes de facons differentes de faire cette meme page. J'aurais pu mieux organiser les balises html en mettant autre chose que des <div> a chaque fois et reflechir a une balise qui convient mieux a chaque partie de la page. J aurais pu utiliser le css et la gestion des classes en css pour changer le texte dynamiquement au lieu de passer par du javascript. J'aurais pu utiliser le css pour rendre la page responsive (c'est à dire que tout les elements reste organisés comme il faut quand on passe d un ecran de pc a un ecran de telephone par exemple), j'aurais pu utiliser un framework comme Angular pour bien separer la partie javascript de la partie html et la partie css mais pour juste une seule page simpliste comme ca, ca serait un peu too much. J'aurais pu separer dans des dossiers different la partie css, html et javascript mais encore une fois, pour une page aussi simple, j ai prefere tout reunir dans un seul fichier. 
+				Bref il y a vraiment un million de facons de creer une page html, en voila un exemple.
+			*/
+
+		</script>
+	</body>
+</html>
+
+
+
