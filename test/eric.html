@@ -1,0 +1,31 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>cacaprout</title>
+	</head>
+	<body>
+		<h1 class="titre">3</h1>
+		valeur <input class="user-input"><input class="submit" type="button" value="valider" onclick="valider()"/>
+
+		<script> /* c'est là le javascript */
+			var v1 = document.querySelector('.titre'); /* qui pointe sur là où il est écrit "3" */
+			var v2 = document.querySelector('.user-input');	/* qui pointe sur l'entrée utilisateur */
+			
+			var n = 1;
+			var k;
+			
+			function valider() {
+				v1.innerText=v2.value;
+				++n;
+				if(n % k === 0) {v1.innerText = "Eric le gros naze !";}
+				v2.value="";
+			}
+			(function initialisation() {k=parseInt(v1.innerText);})(); /* exécuter la 1e fois */
+		</script>
+	</body>
+</html>
+
+
+

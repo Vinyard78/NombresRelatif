@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>fichier test</title>
+	</head>
+	<body>
+		<h1 class="titre">ecriture</h1>
+		valeur <input class="user-input"><input class="submit" type="button" value="valider" onclick="valider()"/>
+
+		<script>
+			var v1 = document.querySelector('.titre');
+			var v2 = document.querySelector('.user-input');
+			
+			var n = 10;
+			function valider() {
+				localStorage.setItem("v1", v1.innerText);
+				localStorage.setItem("v2", v2.value);
+				localStorage.setItem("n", n);
+
+				window.open("./test2.html", "_self");
+			}
+			(function initialisation() {v2.value="recupere";})();
+		</script>
+	</body>
+</html>

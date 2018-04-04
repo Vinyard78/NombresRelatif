@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>fichier test</title>
+	</head>
+	<body>
+		<h1>resultat</h1>
+		<div>
+			v1 : <span class="title-var"></span>
+		</div>
+		<div>
+			v2 : <span class="user-input-var"></span>
+		</div>
+		<div>
+			n : <span class="n-var"></span>
+		</div>
+
+		<script>
+			var sectionResult = document.querySelector('#result');
+			var v1Result = document.querySelector('.title-var');
+			var v2Result = document.querySelector('.user-input-var');
+			var nResult = document.querySelector('.n-var');
+
+			v1Result.innerText = localStorage.getItem("v1");
+			v2Result.innerText = localStorage.getItem("v2");
+			nResult.innerText = localStorage.getItem("n");
+
+			// Pour utiliser le sessionStorage, tu remplaces juste localStorage par sessionStorage et l'utilisation est la meme
+
+		</script>
+	</body>
+</html>
